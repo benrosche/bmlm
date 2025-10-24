@@ -205,7 +205,7 @@ mod.bml1 <-
       mm(
         id(tid_nb, tid),
         mmc(),
-        mmw(w ~ 1/n, constraint=1)
+        mmw(w ~ 1/n, c=T)
       ),
     n.iter = 1000, n.burnin = 100, seed=1, monitor = T,
     data = boston_df
@@ -223,7 +223,7 @@ mod.bml2 <-
       mm(
         id(tid_nb, tid),
         mmc(NOX_nb + CRIM_nb + RM_nb + DIS_nb + AGE_nb),
-        mmw(w ~ 1/n, constraint=1)
+        mmw(w ~ 1/n, c=T)
       ),
     n.iter = 1000, n.burnin = 100, seed=1, monitor = T,
     data = boston_df
@@ -366,7 +366,7 @@ mod.bml3 <-
       mm(
         id(tid_nb, tid),
         mmc(NOX_nb + CRIM_nb + RM_nb + DIS_nb + AGE_nb),
-        mmw(w ~ 1/n^exp(-(b1*DIFF)), constraint=1)
+        mmw(w ~ 1/n^exp(-(b1*DIFF)), c=T)
       ),
     priors=c("b.w~dnorm(0,1)"), n.iter = 1000, n.burnin = 100, seed=1, monitor = T,
     data = boston_df2
@@ -374,7 +374,7 @@ mod.bml3 <-
 
 mod.bml3 %>% summary()
 
-monetPlot(mod.bml3, parameter="b.w", centrality="median")
+monetPlot(mod.bml3, parameter="b.w")
 
 ```
 
@@ -471,14 +471,14 @@ mod.bml4 <-
       mm(
         id(youthid_to, youthid),
         mmc(parent_inc_to),
-        mmw(w ~ b1*1/n_friends+(1-b1)*bestie, constraint=1)
+        mmw(w ~ b1*1/n_friends+(1-b1)*bestie, c=T)
       ),
     n.iter = 1000, n.burnin = 100, seed=1, monitor = T, priors = c("b.w~dunif(0,1)"),
     data = schoolnets
   )
 
 mod.bml4 %>% summary()
-monetPlot(mod.bml4, parameter="b.w", centrality="median") # posterior distribution of the weight coefficient 
+monetPlot(mod.bml4, parameter="b.w") # posterior distribution of the weight coefficient 
 
 mod.bml4$w %>% head() # inspect estimated weight matrix
 

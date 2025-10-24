@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(bmlm)
+library(bml)
 
-test_check("bmlm")
+test_check("bml")

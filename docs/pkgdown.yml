@@ -2,12 +2,12 @@ pandoc: 3.6.3
 pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
+  bml: bml.html
   examples: examples.html
   faq: faq.html
   installation: installation.html
   model: model.html
-  rmm: rmm.html
-last_built: 2025-10-24T12:57Z
+last_built: 2025-10-24T13:29Z
 urls:
-  reference: https://benrosche.github.io/rmm/reference
-  article: https://benrosche.github.io/rmm/articles
+  reference: https://benrosche.github.io/bml/reference
+  article: https://benrosche.github.io/bml/articles

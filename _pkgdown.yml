@@ -1,7 +1,11 @@
-title: rmm
-url: https://benrosche.github.io/rmm/
+home:
+  title: bml
+  description: Bayesian multiple-membership multilevel models with parameterizable weight function.
+  author: "Ben Rosche"
+url: https://benrosche.github.io/bml/
 template:
   params:
+    bootstrap: 5
     bootswatch: flatly
     ganalytics: UA-56931813-1
 navbar:
@@ -23,4 +27,4 @@ navbar:
     - text: "faq"
       href: articles/faq.html
     - icon: fab fa-github
-      href: https://github.com/benrosche/rmm/
+      href: https://github.com/benrosche/bml/

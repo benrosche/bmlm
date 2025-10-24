@@ -1,10 +1,10 @@
-#' @title Create monetPlots for your bmlm results.
+#' @title Create monetPlots for your bml results.
 #'
 #' @description The function \strong{monetPlot} creates a density plot of the posterior 
 #' distribution of your model parameters and the traceplot that led to this density.
 #' 
-#' @param bmlm A bmlm object. bmlm has to be run with monitor=T
-#' @param parameter A string with the parameter name. The internal name has to be used, which are the rownames in the bmlm reg.table output.
+#' @param bml A bml object. bml has to be run with monitor=T
+#' @param parameter A string with the parameter name. The internal name has to be used, which are the rownames in the bml reg.table output.
 #' @param centrality A string specifying one of the following options: "median", "mean", "MAP", or "mode".
 #' @param lab String to describe the parameter on the graph's x-axis. Optional. If not specified, the internal parameter name is used.
 #' @param r Specify number of decimal places. Default equals 3.
@@ -13,14 +13,14 @@
 #' @return Returns a plot. The solid vertical is at 0 and the dashed vertical line is the mode of the posterior distributions.
 #'
 #' @examples data(coalgov)
-#' m1 <- bmlm(Surv(govdur, earlyterm) ~ 1 + mm(id(pid, gid), mmc(fdep), mmw(w ~ 1/n, constraint=1)) + majority + hm(id=cid, name=cname, type=RE, showFE=F),
+#' m1 <- bml(Surv(govdur, earlyterm) ~ 1 + mm(id(pid, gid), mmc(fdep), mmw(w ~ 1/n, constraint=1)) + majority + hm(id=cid, name=cname, type=RE, showFE=F),
 #'           family="Weibull", monitor=T, data=coalgov)
 #' monetPlot(m1, parameter="b.l1")
 #'
 #' @export monetPlot
 #' @author Benjamin Rosche <benjamin.rosche@@gmail.com>
 
-monetPlot <- function(bmlm, parameter, label=NULL, r=2, yaxis=T) {
+monetPlot <- function(bml, parameter, label=NULL, r=2, yaxis=T) {
   
   library(ggplot2)
   library(ggmcmc)
@@ -31,12 +31,12 @@ monetPlot <- function(bmlm, parameter, label=NULL, r=2, yaxis=T) {
   
   # Checks --------------------------------------------------------------------------------------- #
   
-  if(is.null(bmlm$jags.out)) stop("JAGS output could not be retrieved. Please specify monitor = T when running bmlm.")
+  if(is.null(bml$jags.out)) stop("JAGS output could not be retrieved. Please specify monitor = T when running bml.")
   if(is.null(label)) label = parameter
   
   # Get mcmclist and posterior stats ------------------------------------------------------------- #
   
-  mcmc.list <- coda::as.mcmc(bmlm$jags.out)
+  mcmc.list <- coda::as.mcmc(bml$jags.out)
   
   mcmc.ggs <- 
     ggmcmc::ggs(

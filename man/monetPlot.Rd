@@ -2,14 +2,14 @@
 % Please edit documentation in R/monetPlot.R
 \name{monetPlot}
 \alias{monetPlot}
-\title{Create monetPlots for your bmlm results.}
+\title{Create monetPlots for your bml results.}
 \usage{
-monetPlot(bmlm, parameter, label = NULL, r = 2, yaxis = T)
+monetPlot(bml, parameter, label = NULL, r = 2, yaxis = T)
 }
 \arguments{
-\item{bmlm}{A bmlm object. bmlm has to be run with monitor=T}
+\item{bml}{A bml object. bml has to be run with monitor=T}
 
-\item{parameter}{A string with the parameter name. The internal name has to be used, which are the rownames in the bmlm reg.table output.}
+\item{parameter}{A string with the parameter name. The internal name has to be used, which are the rownames in the bml reg.table output.}
 
 \item{r}{Specify number of decimal places. Default equals 3.}
 
@@ -28,7 +28,7 @@ distribution of your model parameters and the traceplot that led to this density
 }
 \examples{
 data(coalgov)
-m1 <- bmlm(Surv(govdur, earlyterm) ~ 1 + mm(id(pid, gid), mmc(fdep), mmw(w ~ 1/n, constraint=1)) + majority + hm(id=cid, name=cname, type=RE, showFE=F),
+m1 <- bml(Surv(govdur, earlyterm) ~ 1 + mm(id(pid, gid), mmc(fdep), mmw(w ~ 1/n, constraint=1)) + majority + hm(id=cid, name=cname, type=RE, showFE=F),
           family="Weibull", monitor=T, data=coalgov)
 monetPlot(m1, parameter="b.l1")
 

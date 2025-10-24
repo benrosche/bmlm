@@ -1,19 +1,19 @@
 #' @title Bayesian multiple membership multilevel models with parameterizable weights using 'JAGS'.
 #'
-#' @description The \strong{bmlm} package provides an interface to fit Bayesian multiple membership 
+#' @description The \strong{bml} package provides an interface to fit Bayesian multiple membership 
 #' multilevel models with parameterizable weights using \href{http://mcmc-jags.sourceforge.net/}{JAGS}.
 #' 
 #' @details 
-#' The core function of \strong{bmlm}, \code{bmlm}, allows users to specify a multiple membership 
+#' The core function of \strong{bml}, \code{bml}, allows users to specify a multiple membership 
 #' multilevel model with parameterizable weights. The package generates the JAGS code to fit the model
 #' and processes the JAGS output to aid the interpretation of the model results.
 #'  
 #' In order to fit the models, JAGS must be \href{https://sourceforge.net/projects/mcmc-jags/files/}{installed}.
 #' 
-#' The \strong{bmlm} package estimates models with a complex, nonstandard multilevel structure, 
+#' The \strong{bml} package estimates models with a complex, nonstandard multilevel structure, 
 #' known as a multiple membership multilevel structure. Unlike other packages and programs for 
 #' estimating multiple membership multilevel models, such as \code{\link[brms]{brms}} or 
-#' \href{http://www.bristol.ac.uk/cmm/software/mlwin/}{MLwiN}, \strong{bmlm} allows users to 
+#' \href{http://www.bristol.ac.uk/cmm/software/mlwin/}{MLwiN}, \strong{bml} allows users to 
 #' parameterize the weights using a weight function specified in formula syntax. This feature 
 #' enables researchers to investigate how the effects of lower-level units aggregate to a 
 #' higher level (micro-macro link).
@@ -110,7 +110,7 @@
 #' @param formula A symbolic description of the model in form of an R formula. More details below.
 #' @param family Character vector. Currently supported are "Gaussian", "Binomial", "Weibull", and "Cox". Not yet implemented: "CondLogit"
 #' @param priors A list with parameter names as tags and their prior specification as values. More details below.
-#' @param inits A list with parameter as tags and their initial values as values. This list will be used in all chains. If NULL, JAGS and bmlm select appropriate inits.
+#' @param inits A list with parameter as tags and their initial values as values. This list will be used in all chains. If NULL, JAGS and bml select appropriate inits.
 #' @param n.iter Total number of iterations.
 #' @param n.burnin Number of iterations that will be discarded.
 #' @param n.thin Thinning rate.
@@ -118,7 +118,7 @@
 #' @param seed A random number.
 #' @param run A logical value (True or False) indicating whether JAGS should estimate the model.
 #' @param monitor A logical value (True or False). If \code{True}, weights, random effects, predictions, and JAGS output is saved as well.
-#' @param modelfile Character vector or TRUE|False. If TRUE, the JAGS model is saved in bmlm/temp/modelstring.txt. If a file path is supplied as string, bmlm will just create the data structure and use the provided modelfile. Run \code{.libPaths()} to see where R packages are stored.
+#' @param modelfile Character vector or TRUE|False. If TRUE, the JAGS model is saved in bml/temp/modelstring.txt. If a file path is supplied as string, bml will just create the data structure and use the provided modelfile. Run \code{.libPaths()} to see where R packages are stored.
 #' @param data Dataframe object. The dataset must have level 1 as unit of analysis. More details below.
 #'
 #' @return A list with 7 elements: reg.table, w, re.l1, re.l3, pred, input, jags.out. If monitor=F, only the 
@@ -126,7 +126,7 @@
 #'         level-3 random effects (if specified in the model), predicted values of the dependent variable, and the internally created variables are returned. 
 #'         The last element of the list is the unformatted Jags output. 
 #' @examples data(coalgov)
-#' m1 <- bmlm(Surv(govdur, earlyterm, govmaxdur) ~ 1 + mm(id(pid, gid), mmc(fdep), mmw(w ~ 1/n, constraint=T)) + majority + hm(id=cid, name=cname, type=RE, showFE=F),
+#' m1 <- bml(Surv(govdur, earlyterm, govmaxdur) ~ 1 + mm(id(pid, gid), mmc(fdep), mmw(w ~ 1/n, constraint=T)) + majority + hm(id=cid, name=cname, type=RE, showFE=F),
 #'           family="Weibull", monitor=T, data=coalgov)
 #' m1$reg.table # the regression output
 #' m1$w         # the estimated weights
@@ -138,12 +138,12 @@
 #' m1 %>% summary() # regression output
 #' monetPlot(m1, "b.l1") # monetPlot to inspect the posterior distribution of the model parameters
 #'
-#' @export bmlm
+#' @export bml
 #' @author Benjamin Rosche <benjamin.rosche@@gmail.com>
 #' @references  
 #' Rosche, B. (2025). A multilevel model for coalition governments: Uncovering dependencies within and across governments due to parties. https://doi.org/10.31235/osf.io/4bafr
 
-bmlm <- function(formula, family="Gaussian", priors=NULL, inits=NULL, n.iter = 1000, n.burnin = 500, n.thin = max(1, floor((n.iter - n.burnin) / 1000)), chains=3, seed=NULL, run=T, parallel=F, monitor=T, modelfile=F, data=NULL) {
+bml <- function(formula, family="Gaussian", priors=NULL, inits=NULL, n.iter = 1000, n.burnin = 500, n.thin = max(1, floor((n.iter - n.burnin) / 1000)), chains=3, seed=NULL, run=T, parallel=F, monitor=T, modelfile=F, data=NULL) {
   
   # formula = sim.y ~ 1 + majority + mm(id(pid, gid), mmc(ipd), mmw(w ~ 1/n^exp(-(b0 + b1*rile.gov_SD)), c=T)); family = "Gaussian";  priors=c("b.w~dunif(0,1)", "b.l1~dnorm(0,1)", "tau.l2~dscaled.gamma(50,2)"); inits=NULL; n.iter=100; n.burnin=10; n.thin = max(1, floor((n.iter - n.burnin) / 1000)); chains = 3; seed = 123; run = T; parallel = F; monitor = T; modelfile = F; data = coalgov %>% rename(rile.gov_SD=hetero)
   # source("./R/dissectFormula.R"); source("./R/createData.R"); source("./R/editModelstring.R"); source("./R/createJagsVars.R"); source("./R/formatJags.R"); 
@@ -158,7 +158,7 @@ bmlm <- function(formula, family="Gaussian", priors=NULL, inits=NULL, n.iter = 1
   # 1. Dissect formula 
   # ---------------------------------------------------------------------------------------------- #
   
-  DIR <- system.file(package = "bmlm")
+  DIR <- system.file(package = "bml")
   
   c(ids, vars, l1, l3) %<-% dissectFormula(formula, family, data) # updated (Jan 2025)
   
@@ -252,7 +252,7 @@ bmlm <- function(formula, family="Gaussian", priors=NULL, inits=NULL, n.iter = 1
     
     out <- list("reg.table"=reg.table, "w"=w, "re.l1"=re.l1, "re.l3"=re.l3, "pred"=pred, "input"=input, "jags.out"=if(isTRUE(monitor)) jags.out else c())
     
-    class(out) <- "bmlm"
+    class(out) <- "bml"
     
     return(out)
     

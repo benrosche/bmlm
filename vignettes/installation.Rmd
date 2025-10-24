@@ -17,8 +17,8 @@ Installation consists of three steps:
 
 1. Install JAGS: http://mcmc-jags.sourceforge.net/
 2. Install devtools if necessary: ```install.packages("devtools")```
-3. Install rmm: ```devtools::install_github("benrosche/rmm")```
+3. Install bml: ```devtools::install_github("benrosche/bml")```
 
-In some cases, dependencies must be installed or are updated before rmm can be installed. 
+In some cases, dependencies must be installed or are updated before bml can be installed. 
 
 If you get ```Error: (converted from warning) ...```, you can set ```Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS" = "true")```

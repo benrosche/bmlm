@@ -3,7 +3,7 @@ library(haven)
 library(labelled)
 library(MASS)
 library(lqmm)
-library(bmlm)
+library(bml)
 library(Hmisc)
 
 ## ATTENTION! THIS IS JUST A COPY. THE MAIN VERSION OF THIS FILE IS AND SHOULD BE KEPT IN GOVSURVIVAL
@@ -207,7 +207,7 @@ crDat <- function(party=3, gov=c(1,3), country=3, weight=c(0,0,0), Sigma=matrix(
 }
 
 # ================================================================================================ #
-# Save data for bmlm() package
+# Save data for bml() package
 # ================================================================================================ #
 
 # coalgov <- crDat(party=3, gov=c(0,3), country=3, weight=c(1,1,1), Sigma=matrix(c(1,0,0, 0,1,0, 0,0,1),3,3), level=1, seed=1)

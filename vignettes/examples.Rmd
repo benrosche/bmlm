@@ -25,7 +25,7 @@ I present three examples to demonstrate how the MMMM can be applied to analyze s
 
 ### The effect of air quality on home values {#e1}
 
-The R file of this example can be found [here](https://benrosche.github.io/rmm/articles/examples_files/rmm-examples.Rmd).
+The R file of this example can be found [here](https://benrosche.github.io/bml/articles/examples_files/bml-examples.Rmd).
 
 This **spatial analysis** example is based on [Harrison & Rubenfield 1978](https://www.sciencedirect.com/science/article/abs/pii/0095069678900062), who study the effect of air quality on home values, and a re-analysis by [Bivand 2017](https://openjournals.wu.ac.at/region/paper_107/107.html).
 
@@ -44,7 +44,7 @@ library(spdep)      # create spatial weights
 library(spatialreg) # spatial regression models
 library(dplyr)
 library(ggplot2)
-library(rmm)
+library(bml)
 
 # Load spatial data from Boston
 boston <- 
@@ -198,8 +198,8 @@ With this setup, we are now ready to estimate the MMMM:
 ```{r}
 
 # Spatial random effect:
-mod.rmm1 <-
-  rmm(
+mod.bml1 <-
+  bml(
     lnCMEDV ~
       NOX + CRIM + RM + DIS + AGE +
       mm(
@@ -211,13 +211,13 @@ mod.rmm1 <-
     data = boston_df
   )
 
-names(mod.rmm1)
+names(mod.bml1)
 
-mod.rmm1 %>% summary()
+mod.bml1 %>% summary()
 
 # Spatial fixed effects + spatial random effect:
-mod.rmm2 <-
-  rmm(
+mod.bml2 <-
+  bml(
     lnCMEDV ~
       NOX + CRIM + RM + DIS + AGE +
       mm(
@@ -229,7 +229,7 @@ mod.rmm2 <-
     data = boston_df
   )
 
-mod.rmm2 %>% summary()
+mod.bml2 %>% summary()
 
 # Calculate spatial correlation in the residual
 getLambda <- function(x) {
@@ -238,14 +238,14 @@ getLambda <- function(x) {
   return(s.l1^2/(s.l1^2+s.l2^2))
 }
 
-mod.rmm1 %>% getLambda()
-mod.rmm2 %>% getLambda()
+mod.bml1 %>% getLambda()
+mod.bml2 %>% getLambda()
 
 ```
 
-Let’s take a closer look at the`rmm()` function by typing `?rmm`:
+Let’s take a closer look at the`bml()` function by typing `?bml`:
 
-![](C:/Users/benja/OneDrive%20-%20Princeton%20University/GitHub/rmm/docs/articles/examples_files/rmm-help.jpg){height="70%;" width="70%"}
+![](C:/Users/benja/OneDrive%20-%20Princeton%20University/GitHub/bml/docs/articles/examples_files/bml-help.jpg){height="70%;" width="70%"}
 
 **The formula object**
 
@@ -275,7 +275,7 @@ mod2 %>% summary()
 
 # Plot coefficients next to each other
 coefs <- 
-  mod.rmm2$reg.table[,c(1,2,4,5)] %>% 
+  mod.bml2$reg.table[,c(1,2,4,5)] %>% 
   mutate(model="MMMM") %>% 
   add_row(
     data.frame(model="SLM", coefficients=coef(mod2)[-1], confint(mod2, level=0.95)[-1,]) %>% 
@@ -359,8 +359,8 @@ Here, we will use weights that sum to 1 for each focal location while allowing v
 
 ```{r}
 # Spatial fixed effects + spatial random effect with "endogenized" weights:
-mod.rmm3 <-
-  rmm(
+mod.bml3 <-
+  bml(
     lnCMEDV ~
       NOX + CRIM + RM + DIS + AGE +
       mm(
@@ -372,9 +372,9 @@ mod.rmm3 <-
     data = boston_df2
   )
 
-mod.rmm3 %>% summary()
+mod.bml3 %>% summary()
 
-monetPlot(mod.rmm3, parameter="b.w", centrality="median")
+monetPlot(mod.bml3, parameter="b.w", centrality="median")
 
 ```
 
@@ -387,9 +387,9 @@ If we set `monitor=T`, we can take a look at the weight estimates:
 
 ```{r}
 
-data.frame(mod.rmm3$w, sum=rowSums(mod.rmm3$w, na.rm = T)) %>% head()
+data.frame(mod.bml3$w, sum=rowSums(mod.bml3$w, na.rm = T)) %>% head()
 
-rowSums(mod.rmm3$w, na.rm = T) %>% sum()
+rowSums(mod.bml3$w, na.rm = T) %>% sum()
 
 ```
 
@@ -464,8 +464,8 @@ schoolnets <-
 mod4 <- lm(test_cogn ~ sex + etn + parent_edu + parent_inc + parent_inc_mean, data=schoolnets) 
 
 # MMMM comparing mean to max aggregation
-mod.rmm4 <-
-  rmm(
+mod.bml4 <-
+  bml(
     test_cogn ~
       sex + etn + parent_edu + parent_inc +
       mm(
@@ -477,20 +477,20 @@ mod.rmm4 <-
     data = schoolnets
   )
 
-mod.rmm4 %>% summary()
-monetPlot(mod.rmm4, parameter="b.w", centrality="median") # posterior distribution of the weight coefficient 
+mod.bml4 %>% summary()
+monetPlot(mod.bml4, parameter="b.w", centrality="median") # posterior distribution of the weight coefficient 
 
-mod.rmm4$w %>% head() # inspect estimated weight matrix
+mod.bml4$w %>% head() # inspect estimated weight matrix
 
 ```
 
-The results suggest that the linear-in-means model is appropriate: the best friend does not appear to have a greater impact than the other nominated friends as b1=`r mod.rmm4$reg.table %>% filter(variable=="b.w") %>% pull(coefficients) %>% round(.,2)`.
+The results suggest that the linear-in-means model is appropriate: the best friend does not appear to have a greater impact than the other nominated friends as b1=`r mod.bml4$reg.table %>% filter(variable=="b.w") %>% pull(coefficients) %>% round(.,2)`.
 Since the estimated aggregation is close to linear-in-means, the effect size of `parent_inc_to` does not differ between models:
 
 ```{r}
 
 coefs <-
-  mod.rmm4$reg.table[,c(1,2,4,5)] %>% 
+  mod.bml4$reg.table[,c(1,2,4,5)] %>% 
   filter(!variable %in% c("X0", "sigma.l1", "sigma.l2", "DIC")) %>% 
   mutate(model="MMMM") %>% 
   add_row(
